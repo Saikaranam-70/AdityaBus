@@ -4,18 +4,15 @@ import App from "./App.jsx";
 import "./index.css";
 
 // ✅ Register service worker for PWA support
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((registration) => {
-        console.log("✅ Service Worker registered successfully:", registration);
-      })
-      .catch((error) => {
-        console.log("❌ Service Worker registration failed:", error);
-      });
+      .register('/service-worker.js')
+      .then(() => console.log('✅ Service Worker registered'))
+      .catch((err) => console.error('❌ Service Worker registration failed:', err));
   });
 }
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

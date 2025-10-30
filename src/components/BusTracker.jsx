@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import icon from "../assets/bus.png";
+import BusRouteProgress from "./BusRouteProgress";
 
 // 🚌 Custom Bus Icon
 const busIcon = new L.Icon({
@@ -174,21 +175,22 @@ export default function BusTracker() {
               );
             })}
 
-          {/* Selected bus with route */}
+          {/* Selected bus with route (updated) */}
           {busData && (
             <>
-              {/* Polyline route */}
+              {/* Polyline: show route as a continuous line */}
+              
               {busData.routePoints?.length > 1 && (
                 <Polyline
                   positions={busData.routePoints.map((p) => [
                     p.latitude,
                     p.longitude,
                   ])}
-                  pathOptions={{ color: "blue", weight: 4, opacity: 0.7 }}
+                  pathOptions={{ color: "blue", weight: 5, opacity: 0.85 }}
                 />
               )}
 
-              {/* Route stops */}
+              {/* Route stops: show markers along the line */}
               {busData.routePoints?.map((point, idx) => (
                 <Marker
                   key={idx}
@@ -202,40 +204,44 @@ export default function BusTracker() {
                   }
                 >
                   <Popup>
-                    <b>{point.name}</b>
+                    <b>Stop {idx + 1}: {point.name}</b>
                     <br />
                     {point.address}
                   </Popup>
                 </Marker>
               ))}
-
-              {/* Bus Marker */}
-              <Marker
-                position={[
-                  busData.currentLocation?.y,
-                  busData.currentLocation?.x,
-                ]}
-                icon={busIcon}
-              >
-                <Popup>
-                  <b>Bus:</b> {busData.busNumber} <br />
-                  <b>Driver:</b> {busData.driverName || "N/A"} <br />
-                  <b>Speed:</b> {busData.currentSpeed || 0} km/h <br />
-                  <b>Status:</b> {busData.currentStatus || "Unknown"} <br />
-                  <a
-                    href={`https://www.google.com/maps?q=${busData.currentLocation?.y},${busData.currentLocation?.x}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    Open in Google Maps
-                  </a>
-                </Popup>
-              </Marker>
+              
+              {/* Bus Marker: Show current location on the line */}
+              {busData.currentLocation?.y != null && busData.currentLocation?.x != null && (
+                <Marker
+                  position={[
+                    busData.currentLocation.y,
+                    busData.currentLocation.x,
+                  ]}
+                  icon={busIcon}
+                >
+                  <Popup>
+                    <b>Bus:</b> {busData.busNumber} <br />
+                    <b>Driver:</b> {busData.driverName || "N/A"} <br />
+                    <b>Speed:</b> {busData.currentSpeed || 0} km/h <br />
+                    <b>Status:</b> {busData.currentStatus || "Unknown"} <br />
+                    <a
+                      href={`https://www.google.com/maps?q=${busData.currentLocation?.y},${busData.currentLocation?.x}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      Open in Google Maps
+                    </a>
+                  </Popup>
+                </Marker>
+              )}
             </>
           )}
         </MapContainer>
       </motion.div>
+
+      
 
       {/* 🧾 Bus List Section */}
       {!busData && (
@@ -287,12 +293,14 @@ export default function BusTracker() {
 
       {/* Selected Bus Info */}
       {busData && (
+        <>
         <motion.div
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
           className="bg-white mt-8 p-6 rounded-3xl shadow-lg w-full max-w-lg text-center"
         >
+            
           <h2 className="text-xl font-semibold text-indigo-700 mb-3">
             🚌 Bus Details
           </h2>
@@ -321,7 +329,10 @@ export default function BusTracker() {
             Back to All Buses
           </button>
         </motion.div>
+        <BusRouteProgress busData={busData} />
+        </>
       )}
+      
     </div>
   );
 }

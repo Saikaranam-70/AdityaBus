@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import BusTracker from "./components/BusTracker";
 import Footer from "./components/Footer";
+import BusRouteProgress from "./components/BusRouteProgress";
 
 const App = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
